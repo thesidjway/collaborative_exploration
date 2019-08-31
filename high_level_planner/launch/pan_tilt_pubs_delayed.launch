@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="vins_config_file" default="$(find vins)/../config/baroness/baroness_stereo_imu_config.yaml" />
+    <arg name="mav_name" default="baroness" />
+    <group ns="$(arg mav_name)">
+    	<node name="vins_node" pkg="vins" type="vins_node" args="$(arg vins_config_file)"> </node>
+    </group>
+
+	<node pkg="rostopic" type="rostopic" name="pan_pub_init" args="pub /husky/joint_pan_position_controller/command std_msgs/Float64 'data: 0.0' -1"/>
+	<node pkg="rostopic" type="rostopic" name="tilt_pub_init" args="pub /husky/joint_tilt_position_controller/command std_msgs/Float64 'data: 1.57' -1"/>
+
+</launch>
