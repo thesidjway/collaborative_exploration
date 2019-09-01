@@ -29,7 +29,7 @@ nbvp/log/on: true
 # scenario (smaller than actual gazebo scenario)
 bbx/minX: -25
 bbx/minY: -16
-bbx/minZ: 0.2
+bbx/minZ: 0.5
 bbx/maxX: 25
 bbx/maxY: 16
 bbx/maxZ: 4

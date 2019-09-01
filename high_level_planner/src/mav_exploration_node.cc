@@ -40,19 +40,23 @@ int main(int argc, char** argv){
   mav_msgs::EigenTrajectoryPoint trajectory_point;
   trajectory_msgs::MultiDOFJointTrajectoryPoint trajectory_point_msg;
 
-  // Wait for 5 seconds to let the Gazebo GUI show up.
-  ros::Duration(5.0).sleep();
+  // Wait for 10 seconds to let the Gazebo GUI show up.
+  ros::Duration(10.0).sleep();
 
   // This is the initialization motion, necessary that the known free space allows the planning
   // of initial paths.
-  double z_target;
+  double x_target, y_target, z_target;
   ROS_INFO("Starting the planner: Performing initialization motion");
-  nh.param<double>("wp_x", trajectory_point.position_W.x(), 0.0);
-  nh.param<double>("wp_y", trajectory_point.position_W.y(), 0.0);
+  nh.param<double>("wp_x", x_target, 0.0);
+  nh.param<double>("wp_y", y_target, 0.0);
   nh.param<double>("wp_z", z_target, 1.0);
+  trajectory_point.position_W.x() = x_target - 0.3;
+  trajectory_point.position_W.y() = y_target;
+  trajectory_point.position_W.z() = z_target;
+
 
   for (double i = 0; i <= 1.0; i = i + 0.1) {
-    trajectory_point.position_W.z() = z_target * 0.2;
+    trajectory_point.position_W.z() = z_target * 0.25 + z_target * 0.15 * i;
     samples_array.header.seq = n_seq;
     samples_array.header.stamp = ros::Time::now();
     samples_array.points.clear();
@@ -62,10 +66,28 @@ int main(int argc, char** argv){
     mav_msgs::msgMultiDofJointTrajectoryPointFromEigen(trajectory_point, &trajectory_point_msg);
     samples_array.points.push_back(trajectory_point_msg);
     trajectory_pub.publish(samples_array);
-    ros::Duration(0.1).sleep();
+    ros::Duration(0.5).sleep();
   }
 
   for (double i = 0; i <= 1.0; i = i + 0.1) {
+    trajectory_point.position_W.x() = x_target - 0.3;
+    trajectory_point.position_W.y() = y_target;
+    trajectory_point.position_W.z() = z_target * 0.4 + i * z_target * 0.6;
+    samples_array.header.seq = n_seq;
+    samples_array.header.stamp = ros::Time::now();
+    samples_array.points.clear();
+    n_seq++;
+    tf::Quaternion quat = tf::Quaternion(tf::Vector3(0.0, 0.0, 1.0), 0);
+    trajectory_point.setFromYaw(tf::getYaw(quat));
+    mav_msgs::msgMultiDofJointTrajectoryPointFromEigen(trajectory_point, &trajectory_point_msg);
+    samples_array.points.push_back(trajectory_point_msg);
+    trajectory_pub.publish(samples_array);
+    ros::Duration(0.5).sleep();
+  }
+
+  for (double i = 0; i <= 1.0; i = i + 0.1) {
+    trajectory_point.position_W.x() = x_target - i * x_target - 0.3;
+    trajectory_point.position_W.y() = y_target;
     trajectory_point.position_W.z() = z_target;
     samples_array.header.seq = n_seq;
     samples_array.header.stamp = ros::Time::now();
@@ -80,9 +102,9 @@ int main(int argc, char** argv){
   }
 
   for (double i = 0; i <= 1.0; i = i + 0.1) {
-    nh.param<double>("wp_x", trajectory_point.position_W.x(), 0.0);
-    nh.param<double>("wp_y", trajectory_point.position_W.y(), 0.0);
-    nh.param<double>("wp_z", trajectory_point.position_W.z(), 1.0);
+    trajectory_point.position_W.x() = - 0.3;
+    trajectory_point.position_W.y() = y_target;
+    trajectory_point.position_W.z() = z_target;
     samples_array.header.seq = n_seq;
     samples_array.header.stamp = ros::Time::now();
     samples_array.points.clear();
@@ -94,6 +116,7 @@ int main(int argc, char** argv){
     trajectory_pub.publish(samples_array);
     ros::Duration(1.0).sleep();
   }
+
 
   trajectory_point.position_W.x() -= 0.5;
   trajectory_point.position_W.y() -= 0.5;
