@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(map_merger)
+set (CMAKE_CXX_STANDARD 11)
 
-find_package(catkin REQUIRED COMPONENTS)
+find_package(catkin REQUIRED COMPONENTS roscpp nav_msgs visualization_msgs)
 
 include_directories(
         include/
