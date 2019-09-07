@@ -40,8 +40,8 @@ int main(int argc, char** argv){
   mav_msgs::EigenTrajectoryPoint trajectory_point;
   trajectory_msgs::MultiDOFJointTrajectoryPoint trajectory_point_msg;
 
-  // Wait for 10 seconds to let the Gazebo GUI show up.
-  ros::Duration(10.0).sleep();
+  // Wait for 6 seconds to let the Gazebo GUI show up.
+  ros::Duration(6.0).sleep();
 
   // This is the initialization motion, necessary that the known free space allows the planning
   // of initial paths.

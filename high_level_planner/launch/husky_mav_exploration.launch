@@ -33,7 +33,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <arg name="log_file" default="$(arg mav_name)" />
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find high_level_planner)/worlds/mtp2.world" />
+    <arg name="world_name" value="$(find high_level_planner)/worlds/icra2.world" />
     <arg name="paused" value="true"/>
     <arg name="gui" value="true"/>
   </include>
@@ -64,7 +64,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <param name="ovs_params" value="$(find ugv_visual_servoing)/params/optimal_visual_servoing.yaml" />
   <param name="aruco_params" value="$(find ugv_visual_servoing)/params/aruco_params.yaml" />
 
-  <!-- <node pkg="ugv_visual_servoing" type="ugv_visual_servoing" name="uvs" output="screen" /> -->
+  <!--<node pkg="ugv_visual_servoing" type="ugv_visual_servoing" name="uvs" output="screen" /> -->
 
   <node pkg="high_level_planner" type="timed_roslaunch.sh" args="5 high_level_planner pan_tilt_pubs_delayed.launch" name="timed_roslaunch" output="screen" />
 

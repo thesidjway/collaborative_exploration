@@ -7,6 +7,7 @@
     </group>
 
 	<node pkg="rostopic" type="rostopic" name="pan_pub_init" args="pub /husky/joint_pan_position_controller/command std_msgs/Float64 'data: 0.0' -1"/>
+	<!-- <node pkg="rostopic" type="rostopic" name="cmd_vel_init" args="pub /husky/cmd_vel geometry_msgs/Twist 'linear: x: -10.0 y: 0.0 z: 0.0 angular: x: 0.0 y: 0.0 z: 0.0' -1"/> -->
 	<node pkg="rostopic" type="rostopic" name="tilt_pub_init" args="pub /husky/joint_tilt_position_controller/command std_msgs/Float64 'data: 1.57' -1"/>
 
 </launch>
