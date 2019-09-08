@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="mav_name" default="baroness" />
+  <arg name="waypoint_x" default="2" />
+  <arg name="waypoint_y" default="0" />
+  <arg name="waypoint_z" default="1" />
+  <arg name="subscript" default="" />
+  <arg name="enable_logging" default="false" />
+  <arg name="enable_ground_truth" default="true" />
+  <arg name="log_file" default="$(arg mav_name)" />
+  <arg name="param_file" default="$(find high_level_planner)/resource/exploration.yaml" />
+  <arg name="tf_frame" default="navigation" />
+  <arg name="pcl_topic" default="/pointcloudOut" />
+  <arg name="vins_topic" default="/$(arg mav_name)/vins_node/odometry" />
+  <!--arg name="stl_file_path" default="" /-->
+  <!--arg name="mesh_resolution" default="1.0" /-->
+  <arg name="resolution" default="0.4" />
+  <arg name="visualize_max_z" default="999" />
+  <arg name="sensor_max_range" default="5.0" />
+  
+  <node pkg="tf" type="static_transform_publisher" name="tf_1$(arg subscript)" args="0 0 0 0 0 0 $(arg mav_name)$(arg subscript)/vi_sensor/base_link fcu$(arg subscript) 1" />
+  <node pkg="tf" type="static_transform_publisher" name="tf_2$(arg subscript)" args="0.015 0.055 0.0065 -1.57 0.0 -1.57 fcu$(arg subscript) $(arg mav_name)$(arg subscript)/vi_sensor/camera_depth_optical_center_link 1" />
+  <node pkg="tf" type="static_transform_publisher" name="tf_3$(arg subscript)" args="0.015 0.055 0.0065 -1.57 0.0 -1.57 fcu$(arg subscript) $(arg mav_name)$(arg subscript)/vi_sensor/camera_left_link 1" />
+  <node pkg="tf" type="static_transform_publisher" name="tf_4$(arg subscript)" args="0.015 -0.055 0.0065 -1.57 0.0 -1.57 fcu$(arg subscript) $(arg mav_name)$(arg subscript)/vi_sensor/camera_right_link 1" />
+  <node pkg="tf" type="static_transform_publisher" name="baroness_vins" args="1 0.0 0.25 0.0 0.0 0.0 baroness/map baroness/odom 1" />
+  <node pkg="tf" type="static_transform_publisher" name="baroness_map" args="0.0 0.0 0 0.0 0.0 0.0 world baroness/map 1" />
+  
+  <group ns="$(arg mav_name)$(arg subscript)">
+    <param name="wp_x" type="double" value="$(arg waypoint_x)" />
+    <param name="wp_y" type="double" value="$(arg waypoint_y)" />
+    <param name="wp_z" type="double" value="$(arg waypoint_z)" />
+    <include file="$(find rotors_gazebo)/launch/spawn_mtp.launch">
+      <arg name="mav_name" value="$(arg mav_name)$(arg subscript)" />
+      <arg name="model" value="$(find rotors_description)/urdf/baroness_with_vi_sensor.gazebo" />
+      <arg name="enable_logging" value="$(arg enable_logging)" />
+      <arg name="enable_ground_truth" value="$(arg enable_ground_truth)" />
+      <arg name="log_file" value="$(arg log_file)"/>
+      <arg name="x" value="$(arg waypoint_x)"/>
+      <arg name="y" value="$(arg waypoint_y)"/>
+      <arg name="z" value="0.2"/>
+      <!--arg name="tf_prefix" default="$(arg mav_name)$(arg subscript)"/-->
+    </include>
+    <node name="lee_position_controller_node" pkg="rotors_control" type="lee_position_controller_node" output="screen">
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/lee_controller_$(arg mav_name).yaml" />
+      <rosparam command="load" file="$(find rotors_gazebo)/resource/$(arg mav_name).yaml" />
+      <remap from="odometry" to= "/baroness/odometry_sensor1/odometry" />
+    </node>
+    
+    <node name="uav_visual_servoing" pkg="uav_visual_servoing" type="uav_visual_servoing" output="screen" >
+      <rosparam command="load" file="$(arg param_file)" />
+    </node>    
+  </group>
+</launch>
